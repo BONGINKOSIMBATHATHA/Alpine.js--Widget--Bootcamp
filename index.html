@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine.js Widgets Bootcamp</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="transportfee.js" defer></script>
+    <script src="word-game.js" defer></script>
+    <script src="greet.js" defer></script>
+    <script src="enough-airtime.js" defer></script>
+    
+    
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-8">
+
+    <!-- Greeting Widget -->
+    <div x-data="greeting()" class="space-y-4">
+        <h1 class="text-xl font-bold">Greeting </h1>
+        <div>
+            <label for="name" class="block">Enter your name:</label>
+            <input id="name" type="text" x-model="name" class="w-full p-2 border rounded" placeholder="Your name">
+        </div>
+        <div class="mt-4">
+            <button @click="generateGreeting" class="px-4 py-2 bg-blue-500 text-white rounded">Greet</button>
+        </div>
+        <div class="mt-4">
+            <p><strong>Greeting:</strong> <span x-text="greeting"></span></p>
+        </div>
+    </div>
+
+    <!-- Word Processor -->
+    <div x-data="wordGame()" class="space-y-4">
+        <h1 class="text-xl font-bold">Word Game</h1>
+        <textarea x-model="sentence" class="w-full p-2 border rounded" placeholder="Enter a sentence..."></textarea>
+        <div class="mt-4">
+            <button @click="processWords" class="px-4 py-2 bg-blue-500 text-white rounded">Process</button>
+        </div>
+        <div class="mt-4">
+            <p><strong>Longest Word:</strong> <span x-text="longest"></span></p>
+            <p><strong>Shortest Word:</strong> <span x-text="shortest"></span></p>
+            <p><strong>Sum of Word Lengths:</strong> <span x-text="sum"></span></p>
+        </div>
+    </div>
+
+    <!-- Transport Fee Calculator -->
+    <div x-data="transportFeeCalculator()" class="space-y-4">
+        <h1 class="text-xl font-bold">Transport Fee Calculator</h1>
+        <select x-model="shift" class="w-full p-2 border rounded">
+            <option value="">Select shift...</option>
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="nightshift">Nightshift</option>
+        </select>
+        <div class="mt-4">
+            <button @click="calculateFee" class="px-4 py-2 bg-blue-500 text-white rounded">Calculate Fee</button>
+        </div>
+        <div class="mt-4">
+            <p><strong>Transport Fee:</strong> <span x-text="fee"></span></p>
+        </div>
+    </div>
+
+    <!-- Airtime Calculator -->
+    <div x-data="airtimeCalculator()" class="space-y-4">
+        <h1 class="text-xl font-bold">Airtime Calculator</h1>
+        <div>
+            <label for="usage" class="block">Projected Usage (comma-separated):</label>
+            <input id="usage" type="text" x-model="projectedUsage" class="w-full p-2 border rounded" placeholder="e.g., call,call,data,sms,call">
+        </div>
+        <div class="mt-4">
+            <label for="airtime" class="block">Available Airtime (R):</label>
+            <input id="airtime" type="number" x-model="availableAirtime" class="w-full p-2 border rounded" placeholder="e.g., 50">
+        </div>
+        <div class="mt-4">
+            <button @click="calculateAirtime" class="px-4 py-2 bg-blue-500 text-white rounded">Calculate Remaining Airtime</button>
+        </div>
+        <div class="mt-4">
+            <p><strong>Remaining Airtime:</strong> <span x-text="remainingAirtime"></span></p>
+        </div>
+    </div>
+
+    <script>
+    function greetingWidget() {
+        return {
+            name: '',
+            greeting: '',
+            generateGreeting() {
+                this.greeting = this.greet(this.name);
+            },
+            greet(name) {
+                var message = 'Hello, ' + name;
+                return message;
+            }
+        }
+    }
+
+    function wordProcessor() {
+        return {
+            sentence: '',
+            longest: '',
+            shortest: '',
+            sum: 0,
+            processWords() {
+                this.longest = this.longestWord(this.sentence);
+                this.shortest = this.shortestWord(this.sentence);
+                this.sum = this.wordLengths(this.sentence);
+            },
+            longestWord(sentence) {
+                var words = sentence.split(" ");
+                var longest = "";
+                var maxLength = 0;
+
+                for (var i = 0; i < words.length; i++) {
+                    if (words[i].length >= maxLength) {
+                        longest = words[i];
+                        maxLength = words[i].length;
+                    }
+                }
+
+                return longest;
+            },
+            shortestWord(sentence) {
+                var words = sentence.split(" ");
+                var shortest = words[0];
+                var minLength = shortest.length;
+
+                for (var i = 1; i < words.length; i++) {
+                    if (words[i].length <= minLength) {
+                        shortest = words[i];
+                        minLength = words[i].length;
+                    }
+                }
+
+                return shortest;
+            },
+            wordLengths(sentence) {
+                var words = sentence.split(" ");
+                var sum = 0;
+
+                for (var i = 0; i < words.length; i++) {
+                    sum += words[i].length;
+                }
+
+                return sum;
+            }
+        }
+    }
+
+    function transportFeeCalculator() {
+        return {
+            shift: '',
+            fee: '',
+            calculateFee() {
+                this.fee = this.transportFee(this.shift);
+            },
+            transportFee(shift) {
+                switch (shift) {
+                    case "morning":
+                        return "R20"; // Morning shift: transport cost is R20
+                    case "afternoon":
+                        return "R10"; // Afternoon shift: transport cost is R10
+                    case "nightshift":
+                        return "free"; // Night shift: transport cost is free
+                    default:
+                        return "Invalid shift"; // Handle invalid shift input
+                }
+            }
+        }
+    }
+
+    function airtimeCalculator() {
+        return {
+            projectedUsage: '',
+            availableAirtime: '',
+            remainingAirtime: '',
+            calculateAirtime() {
+                this.remainingAirtime = this.enoughAirtime(this.projectedUsage, parseFloat(this.availableAirtime));
+            },
+            enoughAirtime(projectedUsage, availableAirtime) {
+                var actions = projectedUsage.split(',');
+
+                var totalCost = 0;
+
+                for (var i = 0; i < actions.length; i++) {
+                    if (actions[i] === 'call') {
+                        totalCost += 1.88;
+                    } else if (actions[i] === 'data') {
+                        totalCost += 12;
+                    } else if (actions[i] === 'sms') {
+                        totalCost += 0.75;
+                    }
+                }
+
+                var remainingAirtime = availableAirtime - totalCost;
+
+                if (remainingAirtime < 0) {
+                    remainingAirtime = 0;
+                }
+
+                return "R" + remainingAirtime.toFixed(2);
+            }
+        }
+    }
+    </script>
+
+</body>
+</html>
